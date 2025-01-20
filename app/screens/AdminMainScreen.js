@@ -7,7 +7,6 @@ const AdminMainScreen = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await signOut(FIREBASE_AUTH);
-    //   navigation.navigate('Home');
     } catch (error) {
       console.error(error);
     }

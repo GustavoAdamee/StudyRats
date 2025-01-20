@@ -68,7 +68,6 @@ export default function App() {
             ) : (
               <>
                 <Stack.Screen name="StudentMain" component={StudentMainScreen} options={{ headerShown: false }}/>
-                <Stack.Screen name="StudyGroupScreen" component={StudyGroupScreen} options={{ headerShown: false }}/>
               </>
             )
           ) : (

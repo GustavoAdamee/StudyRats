@@ -66,7 +66,10 @@ export default function App() {
             user.role === 'admin' ? (
               <Stack.Screen name="AdminMain" component={AdminMainScreen} options={{ headerShown: false }}/>
             ) : (
-              <Stack.Screen name="StudentMain" component={StudentMainScreen} options={{ headerShown: false }}/>
+              <>
+                <Stack.Screen name="StudentMain" component={StudentMainScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="StudyGroupScreen" component={StudyGroupScreen} options={{ headerShown: false }}/>
+              </>
             )
           ) : (
             <>

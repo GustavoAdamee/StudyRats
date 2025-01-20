@@ -54,7 +54,7 @@ const AdminLogin = () => {
       <Text style={styles.title}>Admin Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder="Name (fill just to create account)"
         value={name}
         onChangeText={setName}
         autoCapitalize="words"

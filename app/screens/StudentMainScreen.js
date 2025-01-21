@@ -156,11 +156,16 @@ const StudentMainScreen = () => {
           />
         </View>
       ) : (
-        <FlatList
-          data={groups}
-          renderItem={renderGroupItem}
-          keyExtractor={item => item.id}
-        />
+        <>
+          <View style={styles.noGroupBox}>
+            <Text style={styles.noGroupMessage}>Enter your first study group :)</Text>
+          </View>
+          <FlatList
+            data={groups}
+            renderItem={renderGroupItem}
+            keyExtractor={item => item.id}
+          />
+        </>
       )}
     </View>
   );
@@ -254,7 +259,19 @@ const styles = StyleSheet.create({
   rankingUserName: {
     fontWeight: 'bold',
     fontSize: 16,
-  }
+  },
+  noGroupBox: {
+    alignItems: 'center',
+    flex: 0.5,
+    justifyContent: 'center',
+    textAlign: 'center',
+    // backgroundColor: 'blue',
+    marginTop: 16,
+  },
+  noGroupMessage: {
+    fontSize: 28,
+    textAlign: 'center',
+  },
 });
 
 export default StudentMainScreen;

@@ -7,11 +7,6 @@ import { collection, query, getDocs, updateDoc, doc, arrayUnion, getDoc, where }
 
 const StudentProfileScreen = () => {
   const [studentName, setStudentName] = useState('Student');
-//   const [groups, setGroups] = useState([]);
-//   const [userGroup, setUserGroup] = useState(null);
-//   const [groupName, setGroupName] = useState('');
-//   const [members, setMembers] = useState([]);
-//   const [isInGroup, setIsInGroup] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {

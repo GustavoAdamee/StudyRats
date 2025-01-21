@@ -11,6 +11,7 @@ import AdminLogin from './app/screens/AdminLogin';
 import StudentLogin from './app/screens/StudentLogin';
 import AdminMainScreen from './app/screens/AdminMainScreen';
 import StudentMainScreen from './app/screens/StudentMainScreen';
+import StudySessionScreen from './app/screens/StudySessionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -68,6 +69,7 @@ export default function App() {
             ) : (
               <>
                 <Stack.Screen name="StudentMain" component={StudentMainScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="StudySession" component={StudySessionScreen} options={{ headerShown: false }}/>
               </>
             )
           ) : (

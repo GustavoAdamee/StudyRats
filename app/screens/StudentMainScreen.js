@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { collection, query, getDocs, updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
@@ -11,6 +12,7 @@ const StudentMainScreen = () => {
   const [groupName, setGroupName] = useState('');
   const [members, setMembers] = useState([]);
   const [isInGroup, setIsInGroup] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchStudentName = async () => {
@@ -98,6 +100,10 @@ const StudentMainScreen = () => {
     }
   };
 
+  const handleStartSession = () => {
+    navigation.navigate('StudySession');
+  };
+
   const formatTime = (minutes) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -145,7 +151,7 @@ const StudentMainScreen = () => {
               <Text style={styles.leaveGroupButtonText}>Leave group</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => Alert.alert('Start study session')} style={styles.startSessionButton}>
+          <TouchableOpacity onPress={handleStartSession} style={styles.startSessionButton}>
             <Text style={styles.startSessionText}>Start study session</Text>
           </TouchableOpacity>
           <FlatList

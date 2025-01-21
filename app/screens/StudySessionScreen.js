@@ -82,8 +82,9 @@ const StudySessionScreen = () => {
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Study Session</Text>
+        {/* GAMBIARRA :) */}
         <TouchableOpacity onPress={() => navigation.navigate('StudentProfile')} style={styles.profileButton}>
-          <Text style={styles.profileButtonText}>👤</Text>
+          {/* <Text style={styles.profileButtonText}>👤</Text> */}
         </TouchableOpacity>
       </View>
       <View style={styles.content}>

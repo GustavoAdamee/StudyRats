@@ -148,7 +148,7 @@ const StudentMainScreen = () => {
       </TouchableOpacity>
         <Text style={styles.title}>Student {studentName}</Text>
         <View style={styles.headerButtons}>
-          <TouchableOpacity onPress={() => Alert.alert('Profile Page')} style={styles.profileButton}>
+          <TouchableOpacity onPress={() => navigation.navigate("StudentProfile")} style={styles.profileButton}>
             <Text style={styles.profileButtonText}>👤</Text>
           </TouchableOpacity>
         </View>

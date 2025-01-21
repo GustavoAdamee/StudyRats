@@ -53,6 +53,7 @@ const StudySessionScreen = () => {
         image: image,
       });
       Alert.alert('Success', 'Study session saved');
+      navigation.navigate('StudentMain');
     } catch (error) {
       console.error('Error saving study session: ', error);
     }

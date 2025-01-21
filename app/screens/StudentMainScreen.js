@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Button } fro
 import { useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
-import { collection, query, getDocs, updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
+import { collection, query, getDocs, updateDoc, doc, arrayUnion, getDoc, where } from 'firebase/firestore';
 
 const StudentMainScreen = () => {
   const [studentName, setStudentName] = useState('Student');
@@ -51,10 +51,22 @@ const StudentMainScreen = () => {
     const membersWithNames = await Promise.all(groupData.members.map(async (member) => {
       const userDoc = await getDoc(doc(FIREBASE_DB, 'users', member.userId));
       const userData = userDoc.data();
-      return { ...member, userName: userData.name };
+      const totalTimeStudied = await calculateTotalTimeStudied(member.userId);
+      return { ...member, userName: userData.name, totalTimeStudied };
     }));
+    membersWithNames.sort((a, b) => b.totalTimeStudied - a.totalTimeStudied);
     setGroupName(groupData.name);
     setMembers(membersWithNames);
+  };
+
+  const calculateTotalTimeStudied = async (userId) => {
+    const q = query(collection(FIREBASE_DB, 'studySessions'), where('userId', '==', userId));
+    const querySnapshot = await getDocs(q);
+    let totalTime = 0;
+    querySnapshot.forEach(doc => {
+      totalTime += doc.data().studiedTime;
+    });
+    return totalTime;
   };
 
   const handleLogout = async () => {
@@ -71,7 +83,7 @@ const StudentMainScreen = () => {
     try {
       await updateDoc(doc(FIREBASE_DB, 'users', uid), { groupId });
       await updateDoc(doc(FIREBASE_DB, 'groups', groupId), {
-        members: arrayUnion({ userId: uid, timeStudied: 0 })
+        members: arrayUnion({ userId: uid})
       });
       setUserGroup(groupId);
       fetchGroupDetails(groupId);
@@ -104,10 +116,11 @@ const StudentMainScreen = () => {
     navigation.navigate('StudySession');
   };
 
-  const formatTime = (minutes) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const renderGroupItem = ({ item }) => (
@@ -121,7 +134,7 @@ const StudentMainScreen = () => {
       <Text>{index + 1}</Text>
       <View style={styles.memberInfo}>
         <Text style={styles.rankingUserName}>{item.userName}</Text>
-        <Text>{formatTime(item.timeStudied)}</Text>
+        <Text>{formatTime(item.totalTimeStudied)}</Text>
       </View>
       {index === 0 && <Text>🏆</Text>}
     </View>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { getAuth, signOut } from 'firebase/auth';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -14,8 +15,6 @@ const StudySessionScreen = () => {
   const [time, setTime] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const navigation = useNavigation();
-  const auth = getAuth();
-  const db = getFirestore();
 
   useEffect(() => {
     (async () => {
@@ -43,57 +42,67 @@ const StudySessionScreen = () => {
   };
 
   const handleStopSession = async () => {
-    console.log('Stopping session');
-    console.log('Time:', time);
-    console.log('Location:', location?.coords);
-    console.log('Image:', image);
     clearInterval(intervalId);
     setIsRunning(false);
-    const user = auth.currentUser;
-    await addDoc(collection(db, 'studySessions'), {
-      userId: user.uid,
-      studiedTime: time,
-      location: location?.coords,
-      image: image,
-    });
+    const user = FIREBASE_AUTH.currentUser;
+    try {
+      await addDoc(collection(FIREBASE_DB, 'studySessions'), {
+        userId: user.uid,
+        studiedTime: time,
+        location: location?.coords,
+        image: image,
+      });
+      Alert.alert('Success', 'Study session saved');
+    } catch (error) {
+      console.error('Error saving study session: ', error);
+    }
   };
 
   const handlePickImage = async () => {
     let result = await ImagePicker.launchCameraAsync();
-    if (!result.cancelled) {
-      setImage(result.uri);
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
   };
 
-  const handleLogout = () => {
-    signOut(auth).then(() => {
-      navigation.replace('LoginScreen');
-    });
+  const handleLogout = async () => {
+    try {
+      await signOut(FIREBASE_AUTH);
+    } catch (error) {
+      console.error('Error logging out: ', error);
+    }
   };
 
   return (
     <View style={styles.container}>
+      
       <View style={styles.header}>
-        <Text style={styles.welcome}>Student {auth.currentUser.displayName}</Text>
-        <Button title="Profile" onPress={() => navigation.navigate('ProfileScreen')} />
-        <Button title="Logout" onPress={handleLogout} />
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>Study Session</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('StudentProfile')} style={styles.profileButton}>
+          <Text style={styles.profileButtonText}>👤</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.registerButton} onPress={handlePickImage}>
-        <Text style={styles.registerButtonText}>📷 Register your session</Text>
-      </TouchableOpacity>
-      <AnimatedCircularProgress
-        size={200}
-        width={3}
-        fill={100}
-        tintColor="green"
-        backgroundColor="#3d5875"
-        style={styles.cronometer}
-      >
-        {() => <Text style={styles.timeText}>{new Date(time * 1000).toISOString().substr(11, 8)}</Text>}
-      </AnimatedCircularProgress>
-      <View style={styles.buttons}>
-        <Button title={isRunning ? "Pause" : "Resume"} onPress={handleStartStop} />
-        <Button title="Stop" onPress={handleStopSession} />
+      <View style={styles.content}>
+        <TouchableOpacity style={styles.registerButton} onPress={handlePickImage}>
+          <Text style={styles.registerButtonText}>📷 Register your session</Text>
+        </TouchableOpacity>
+        <AnimatedCircularProgress
+          size={200}
+          width={3}
+          fill={100}
+          tintColor="green"
+          backgroundColor="#3d5875"
+          style={styles.cronometer}
+        >
+          {() => <Text style={styles.timeText}>{new Date(time * 1000).toISOString().substr(11, 8)}</Text>}
+        </AnimatedCircularProgress>
+        <View style={styles.buttons}>
+          <Button title={isRunning ? "Pause" : "Resume"} onPress={handleStartStop} />
+          <Button title="Stop" onPress={handleStopSession} />
+        </View>
       </View>
     </View>
   );
@@ -102,23 +111,43 @@ const StudySessionScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
+  },
+  content: {
+    flex: 0.9,
     justifyContent: 'center',
     alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    padding: 20,
+    alignItems: 'center',
   },
-  welcome: {
-    fontSize: 20,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  profileButton: {
+    marginRight: 10,
+  },
+  profileButtonText: {
+    fontSize: 18,
+  },
+  logoutButton: {
+    padding: 5,
+    backgroundColor: '#f00',
+    borderRadius: 5,
+  },
+  logoutButtonText: {
+    fontSize: 12,
+    color: '#fff',
   },
   registerButton: {
-    marginVertical: 20,
+    marginVertical: 40,
     padding: 10,
     backgroundColor: '#ddd',
     borderRadius: 5,
+
   },
   registerButtonText: {
     fontSize: 18,
@@ -135,6 +164,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
   },
+  
 });
 
 export default StudySessionScreen;

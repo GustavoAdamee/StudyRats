@@ -34,7 +34,7 @@ const StudentMainScreen = () => {
       try {
         const q = query(collection(FIREBASE_DB, 'groups'));
         const querySnapshot = await getDocs(q);
-        const groupsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const groupsList = querySnapshot.docs.map(doc => ({ id: doc.id, membersCount: doc.data().members.length, ...doc.data() }));
         setGroups(groupsList);
       } catch (error) {
         console.error(error);
@@ -124,41 +124,45 @@ const StudentMainScreen = () => {
   };
 
   const renderGroupItem = ({ item }) => (
-    <TouchableOpacity style={styles.groupItem} onPress={() => handleJoinGroup(item.id)}>
-      <Text>{item.name}</Text>
+    <TouchableOpacity style={styles.groupTile} onPress={() => handleJoinGroup(item.id)}>
+      <Text style={styles.groupTileText}>{item.name}</Text>
+      <Text style={styles.groupTileMembers}>{item.membersCount} members</Text>
     </TouchableOpacity>
   );
 
   const renderMemberItem = ({ item, index }) => (
-    <View style={styles.memberItem}>
-      <Text>{index + 1}</Text>
+    <View style={styles.memberTile}>
+      <View style={styles.rankCircle}>
+        <Text style={styles.rankText}>{index + 1}</Text>
+      </View>
       <View style={styles.memberInfo}>
         <Text style={styles.rankingUserName}>{item.userName}</Text>
-        <Text>{formatTime(item.totalTimeStudied)}</Text>
+        <Text style={styles.totalTimeText}>{formatTime(item.totalTimeStudied)}</Text>
       </View>
-      {index === 0 && <Text>🏆</Text>}
+      {index === 0 && <Text style={styles.trophyEmoji}>🏆</Text>}
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isInGroup && styles.groupContainer]}>
+      <Text style={styles.logo}>📚</Text>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
-          <Text style={styles.title}>Student {studentName}</Text>
-          <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={() => navigation.navigate("StudentProfile")} style={styles.profileButton}>
-              <Text style={styles.profileButtonText}>👤</Text>
-            </TouchableOpacity>
-          </View>
+        <Text style={[styles.title, isInGroup && styles.titleWhite]}>Student {studentName}</Text>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity onPress={() => navigation.navigate("StudentProfile")} style={styles.profileButton}>
+            <Text style={styles.profileButtonText}>👤</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       {isInGroup ? (
         <View>
           <View style={styles.subtitle}>
             <View style={styles.groupInfo}>
               <Text style={styles.groupTitle}>{groupName}</Text>
-              <Text>{members.length} students</Text>
+              <Text style={styles.groupStudents}>{members.length} students</Text>
             </View>
             <TouchableOpacity onPress={handleLeaveGroup} style={styles.leaveGroupButton}>
               <Text style={styles.leaveGroupButtonText}>Leave group</Text>
@@ -166,6 +170,7 @@ const StudentMainScreen = () => {
           </View>
           <TouchableOpacity onPress={handleStartSession} style={styles.startSessionButton}>
             <Text style={styles.startSessionText}>Start study session</Text>
+            <Text style={styles.bookEmoji}>📚</Text>
           </TouchableOpacity>
           <FlatList
             style={{ marginTop: 22 }}
@@ -195,6 +200,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  groupContainer: {
+    backgroundColor: '#498130',
+  },
+  logo: {
+    fontSize: 40,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -209,6 +222,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  titleWhite: {
+    color: '#fff',
+  },
   subtitle: {
     fontSize: 18,
     marginBottom: 16,
@@ -216,7 +232,11 @@ const styles = StyleSheet.create({
   },
   groupTitle: {
     fontSize: 22,
-    fontStyle: 'bold',
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  groupStudents: {
+    color: '#fff',
   },
   groupItem: {
     padding: 16,
@@ -226,23 +246,45 @@ const styles = StyleSheet.create({
   groupInfo: {
     flex: 1,
   },
-  memberItem: {
+  memberTile: {
+    backgroundColor: '#fff',
+    padding: 6,
+    marginVertical: 8,
+    borderRadius: 8,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  },
+  rankCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#d3d3d3',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rankText: {
+    fontSize: 18,
   },
   memberInfo: {
     flex: 1,
     marginLeft: 16,
   },
+  rankingUserName: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  totalTimeText: {
+    fontSize: 18,
+  },
+  trophyEmoji: {
+    fontSize: 24,
+  },
   profileButton: {
     marginRight: 10,
   },
   profileButtonText: {
-    fontSize: 18,
+    fontSize: 24,
+    color: 'black',
   },
   logoutButton: {
     padding: 5,
@@ -255,14 +297,21 @@ const styles = StyleSheet.create({
   },
   startSessionButton: {
     padding: 10,
-    backgroundColor: '#498130',
+    backgroundColor: '#fff',
     borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '80%',
+    alignSelf: 'center',
   },
   startSessionText: {
     fontSize: 18,
-    color: '#fff',
-    textAlign: 'left',
-    paddingLeft: 10,
+    color: '#498130',
+  },
+  bookEmoji: {
+    fontSize: 18,
+    color: '#498130',
   },
   leaveGroupButton: {
     marginTop: 10,
@@ -275,21 +324,33 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#fff',
   },
-  rankingUserName: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   noGroupBox: {
     alignItems: 'center',
     flex: 0.5,
     justifyContent: 'center',
     textAlign: 'center',
-    // backgroundColor: 'blue',
     marginTop: 16,
   },
   noGroupMessage: {
     fontSize: 28,
     textAlign: 'center',
+  },
+  groupTile: {
+    backgroundColor: '#498130',
+    padding: 16,
+    marginVertical: 8,
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  groupTileText: {
+    color: '#fff',
+    fontSize: 26,
+  },
+  groupTileMembers: {
+    color: '#fff',
+    fontSize: 12,
   },
 });
 

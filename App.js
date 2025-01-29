@@ -19,15 +19,22 @@ const Stack = createNativeStackNavigator();
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome</Text>
-      <Button
-        title="Login as Administrator"
-        onPress={() => navigation.navigate('AdminLogin')}
-      />
-      <Button
-        title="Login as Student"
-        onPress={() => navigation.navigate('StudentLogin')}
-      />
+      <Text style={styles.title}>Study Rats</Text>
+      <Text style={styles.emoji}>🎓</Text>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Login as Administrator"
+          onPress={() => navigation.navigate('AdminLogin')}
+          color="#498130"
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Login as Student"
+          onPress={() => navigation.navigate('StudentLogin')}
+          color="#498130"
+        />
+      </View>
     </View>
   );
 };
@@ -38,15 +45,20 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (authUser) => {
-      if (authUser) {
-        const uid = authUser.uid;
-        const userDoc = await getDoc(doc(FIREBASE_DB, 'users', uid));
-        const userData = userDoc.data();
-        setUser({ ...authUser, role: userData.role });
-      } else {
-        setUser(null);
+      try {
+        if (authUser) {
+          const uid = authUser.uid;
+          const userDoc = await getDoc(doc(FIREBASE_DB, 'users', uid));
+          const userData = userDoc.data();
+          setUser({ ...authUser, role: userData.role });
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -95,8 +107,20 @@ const styles = StyleSheet.create({
     marginTop: 20, // Adjust the value as needed
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     marginBottom: 16,
     textAlign: 'center',
+  },
+  emoji: {
+    fontSize: 100,
+    textAlign: 'center',
+    marginBottom: 72,
+  },
+  buttonContainer: {
+    marginVertical: 20,
+    width: '80%', // Adjust the width as needed
+    alignSelf: 'center', // Center the buttons
+    borderRadius: 8, // Make the buttons rounded
+    overflow: 'hidden', // Ensure the button content stays within the rounded corners
   },
 });

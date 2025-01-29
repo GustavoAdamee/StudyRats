@@ -96,25 +96,40 @@ const AdminMainScreen = ({ navigation }) => {
 
   const renderGroupItem = ({ item }) => (
     <View style={styles.groupItem}>
-      <Text>{item.name}</Text>
-      <Button title="Edit" onPress={() => openEditModal(item)} />
-      <Button title="Delete" onPress={() => handleDeleteGroup(item.id)} />
+      <Text style={styles.groupItemText}>{item.name}</Text>
+      <View style={styles.groupActionsButtons}>
+        <TouchableOpacity onPress={() => openEditModal(item)} style={{ marginRight: 20 }}>
+          <Text style={styles.groupItemButton}>✏️</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleDeleteGroup(item.id)}>
+          <Text style={styles.groupItemButton}>🗑️</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      <Text style={styles.emoji}>📚</Text>
       <View style={styles.header}>
-        <Button title="Logout" onPress={handleLogout} />
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>Administrator {adminName}</Text>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity style={styles.profileButton}>
+          </TouchableOpacity>
+        </View>
       </View>
-      <Text style={styles.title}>Administrator {adminName}</Text>
       <TextInput
         style={styles.input}
         placeholder="New Group Name"
         value={newGroupName}
         onChangeText={setNewGroupName}
       />
-      <Button title="+ Group" onPress={handleCreateGroup} />
+      <TouchableOpacity style={styles.createGroupButton} onPress={handleCreateGroup}>
+        <Text style={styles.createGroupButtonText}>+ Group</Text>
+      </TouchableOpacity>
       <FlatList
         data={groups}
         renderItem={renderGroupItem}
@@ -141,15 +156,41 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  emoji: {
+    fontSize: 50,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
+  },
+  logoutButton: {
+    padding: 10,
+    backgroundColor: '#f44336',
+    borderRadius: 5,
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+  },
+  profileButton: {
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  profileButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
   },
   input: {
     borderWidth: 1,
@@ -157,17 +198,42 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 16,
   },
+  createGroupButton: {
+    backgroundColor: 'rgba(73, 129, 48, 0.17)',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 60,
+  },
+  createGroupButtonText: {
+    color: '#498130',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  groupActionsButtons: {
+    flexDirection: 'row'
+  },
   groupItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    padding: 16,
+    backgroundColor: '#498130',
+    borderRadius: 5,
+    marginBottom: 8,
+  },
+  groupItemText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  groupItemButton: {
+    fontSize: 22,
+    color: 'white',
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: 22,
+    padding: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,

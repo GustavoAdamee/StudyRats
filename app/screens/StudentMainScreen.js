@@ -143,15 +143,15 @@ const StudentMainScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-        <Text style={styles.logoutButtonText}>Logout</Text>
-      </TouchableOpacity>
-        <Text style={styles.title}>Student {studentName}</Text>
-        <View style={styles.headerButtons}>
-          <TouchableOpacity onPress={() => navigation.navigate("StudentProfile")} style={styles.profileButton}>
-            <Text style={styles.profileButtonText}>👤</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+          <Text style={styles.title}>Student {studentName}</Text>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity onPress={() => navigation.navigate("StudentProfile")} style={styles.profileButton}>
+              <Text style={styles.profileButtonText}>👤</Text>
+            </TouchableOpacity>
+          </View>
       </View>
       {isInGroup ? (
         <View>

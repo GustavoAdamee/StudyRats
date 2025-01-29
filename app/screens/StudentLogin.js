@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
@@ -51,7 +51,11 @@ const StudentLogin = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Student Login</Text>
+      <Text style={styles.mainTitle}>Study Rats</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.emoji}>🎓</Text>
+        <Text style={styles.title}>Student Login</Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Name (fill just to create account)"
@@ -79,8 +83,12 @@ const StudentLogin = () => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <>
-          <Button title="Login" onPress={signIn} />
-          <Button title="Create Account" onPress={signUp} />
+          <TouchableOpacity style={styles.button} onPress={signIn}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.buttonMargin]} onPress={signUp}>
+            <Text style={styles.buttonText}>Create Account</Text>
+          </TouchableOpacity>
         </>
       )}
     </View>
@@ -90,20 +98,57 @@ const StudentLogin = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#498130',
+    alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: 20,
+  },
+  mainTitle: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+    position: 'absolute',
+    top: 50,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  emoji: {
+    fontSize: 24,
+    marginRight: 10,
   },
   title: {
     fontSize: 24,
-    marginBottom: 16,
-    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#fff',
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
+    width: '100%',
+    padding: 15,
+    borderRadius: 25,
+    backgroundColor: '#fff',
+    marginBottom: 20,
+    fontSize: 18,
+  },
+  button: {
+    marginTop: 20,
+    // width: '100%',
+    padding: 15,
+    borderRadius: 12,
+    // backgroundColor: 'rgba(73, 129, 48, 0.17)',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'rgba(73, 129, 48, 0.8)',
+    fontWeight: 'bold',
+  },
+  buttonMargin: {
+    marginTop: 10,
   },
 });
 

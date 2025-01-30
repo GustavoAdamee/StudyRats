@@ -76,7 +76,7 @@ const StudySessionScreen = () => {
 
   return (
     <View style={styles.container}>
-      
+      {/* Move the register button to the top */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Text style={styles.logoutButtonText}>Logout</Text>
@@ -87,10 +87,10 @@ const StudySessionScreen = () => {
           {/* <Text style={styles.profileButtonText}>👤</Text> */}
         </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.registerButton} onPress={handlePickImage}>
+        <Text style={styles.registerButtonText}>📷 Register your session</Text>
+      </TouchableOpacity>
       <View style={styles.content}>
-        <TouchableOpacity style={styles.registerButton} onPress={handlePickImage}>
-          <Text style={styles.registerButtonText}>📷 Register your session</Text>
-        </TouchableOpacity>
         <AnimatedCircularProgress
           size={200}
           width={3}
@@ -98,12 +98,18 @@ const StudySessionScreen = () => {
           tintColor="green"
           backgroundColor="#3d5875"
           style={styles.cronometer}
+          rotation={0}
+          lineCap="round"
         >
           {() => <Text style={styles.timeText}>{new Date(time * 1000).toISOString().substr(11, 8)}</Text>}
         </AnimatedCircularProgress>
         <View style={styles.buttons}>
-          <Button title={isRunning ? "Pause" : "Resume"} onPress={handleStartStop} />
-          <Button title="Stop" onPress={handleStopSession} />
+          <TouchableOpacity style={styles.actionButton} onPress={handleStartStop}>
+            <Text style={styles.actionButtonText}>{isRunning ? "Pause" : "Resume"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={handleStopSession}>
+            <Text style={styles.actionButtonText}>Stop</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -145,14 +151,15 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   registerButton: {
-    marginVertical: 40,
-    padding: 10,
-    backgroundColor: '#ddd',
+    marginTop: 60,
+    padding: 15,
+    backgroundColor: 'rgba(73, 129, 48, 0.17)',
     borderRadius: 5,
-
+    alignSelf: 'center',
   },
   registerButtonText: {
-    fontSize: 18,
+    fontSize: 20,
+    color: '#498130',
   },
   cronometer: {
     marginVertical: 20,
@@ -166,7 +173,15 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
   },
-  
+  actionButton: {
+    padding: 15,
+    backgroundColor: 'rgba(73, 129, 48, 0.17)',
+    borderRadius: 5,
+  },
+  actionButtonText: {
+    fontSize: 20,
+    color: '#498130',
+  },
 });
 
 export default StudySessionScreen;

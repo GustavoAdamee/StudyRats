@@ -67,17 +67,11 @@ const StudentProfileScreen = () => {
 
   const renderSessionItem = ({ item, index }) => (
     <View style={styles.sessionItem}>
-      <Text style={styles.sessionTitle}>Session {index + 1}</Text>
-      <Text 
-        style={{fontWeight: 'bold'}}
-      >
-        Address: <Text style={{fontWeight: '100'}}>{coordToAdress(item.location.latitude,item.location.longitude)}</Text>
-      </Text>
-      <Text
-        style={{fontWeight: 'bold'}}
-      >
-        Total Time: <Text style={{fontWeight: '100'}}>{formatTime(item.studiedTime)}</Text>
-      </Text>
+      <View style={styles.sessionHeader}>
+        <Text style={styles.sessionTitle}>Session {index + 1}</Text>
+        <Text style={styles.sessionTime}>{formatTime(item.studiedTime)}</Text>
+      </View>
+      <Text style={styles.sessionAddress}>{coordToAdress(item.location.latitude, item.location.longitude)}</Text>
       {item.image && <Image source={{ uri: item.image }} style={styles.sessionImage} />}
     </View>
   );
@@ -92,8 +86,14 @@ const StudentProfileScreen = () => {
         <Text></Text>
       </View>
       <View style={styles.totalsContainer}>
-        <Text>Total Time Studied: {formatTime(totalTimeStudied)}</Text>
-        <Text>Total Study Sessions: {totalSessions}</Text>
+        <View style={styles.totalsTile}>
+          <Text style={styles.totalsText}>Total Time Studied:</Text>
+        </View>
+        <Text style={styles.totalsTextOut}>{formatTime(totalTimeStudied)}</Text>
+        <View style={styles.totalsTile}>
+          <Text style={styles.totalsText}>Total Study Sessions:</Text>
+        </View>
+        <Text style={styles.totalsTextOut}>{totalSessions}</Text>
       </View>
       <FlatList
         data={sessions}
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#498130', // Changed background color
   },
   header: {
     flexDirection: 'row',
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    paddingRight: 30,
   },
   logoutButton: {
     padding: 5,
@@ -130,19 +132,60 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   totalsContainer: {
+    marginTop: 40,
+    marginBottom: 10,
+    alignItems: 'center', // Centered on screen
+  },
+  totalsText: {
+    fontSize: 20, // Big font size
+    // fontWeight: 'bold',
+    color: '#000', // Black font color
+  },
+  totalsTextOut: {
+    fontSize: 40, // Big font size
+    // fontWeight: 'bold',
+    color: '#FFF', // Black font color
     marginBottom: 16,
+  },
+  totalsTile: {
+    backgroundColor: '#fff', // White tile
+    padding: 8,
+    paddingHorizontal: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 5,
   },
   flatList: {
     marginTop: 16,
   },
   sessionItem: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    marginBottom: 16, // Spaced from one another
+    backgroundColor: '#fff', // White tile
+    borderRadius: 10, // Rounded corners
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  sessionHeader: {
+    flexDirection: 'column', // Align vertically
+    alignItems: 'flex-start',
   },
   sessionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
+  },
+  sessionTime: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#A9A9A9', // Light gray color
+  },
+  sessionAddress: {
+    fontSize: 16,
+    marginTop: 4,
+    color: '#A9A9A9', // Light gray color
   },
   sessionImage: {
     width: '100%',
